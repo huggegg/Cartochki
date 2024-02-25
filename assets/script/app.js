@@ -1,3 +1,4 @@
+
 // const array = [1, 2, 3, 5, 20, 111]
 
 
@@ -25,16 +26,35 @@ createBtn.onclick = function () {
         title: inputElement.value,
         completed: false,
     }
-        listElement.insertAdjacentHTML('beforeend', getNoteTemplate(newNote))
-
+    notes.push(newNote)
+    render()
     inputElement.value = ''
 }
 
-function getNoteTemplate(note) {
+listElement.onclick = function (event) {
+    if(event.target.dataset.index) {
+        const index = parseInt(event.target.dataset.index)
+        const type = event.target.dataset.type
+    
+
+    if (type == 'toggle') {
+        notes[index].completed = !notes[index].completed
+    } else if (type == 'remove') {
+        notes.splice(index, 1)
+    }
+    }
+
+    render()
+}
+
+function getNoteTemplate(note, index) {
     return `
         <div class="flex my-5 justify-center ">
         <li class="w-[907px] py-14 pl-10 pr-80 bg-[#D9D9D9] rounded-2xl ${note.completed ? 'line-through' : ''}  placeholder:text-[#333] placeholder:font-bold transition-all border">${note.title}</li>
-        <button class="py-12 px-10 bg-[#C3A28A] rounded-2xl relative right-5 ${note.completed ? 'warning' : 'succes'} ">Deleate</button>
+        <button class="py-12 px-10 bg-[#C3A28A] rounded-2xl relative right-5 ${note.completed ? 'warning' : 'succes'} ">
+        <a class="cursor-pointer p-3 bg-[#d6df59] rounded-2xl text-[#fff]" data-index="${index}" data-type="toggle">done<a>
+        |
+        <a class="cursor-pointer" data-index="${index}" data-type="remove">delete<a></button>
         <button class="relative -top-10 right-0"><img src="assets/svg/ic_outline-edit.svg" alt=""></button>
         </div>
     `
@@ -67,17 +87,17 @@ const notes = [{
 ]
 
 function render() {
+    listElement.innerHTML = ''
+    if (notes.length == 0) {
+        listElement.innerHTML = '<h1>Нет заметок</h2>'
+    }
+    for (let i = 0; i < notes.length; i++) {
+    listElement.insertAdjacentHTML('beforeend', getNoteTemplate(notes[i], i))
 
-    // for (let i = 0; i < notes.length; i++) {
-    // listElement.insertAdjacentHTML('beforeend', getNoteTemplate(notes[i]))
-
-    // }
-
-
-    for (let note of notes) {
-        listElement.insertAdjacentHTML('beforeend', getNoteTemplate(note))
     }
 
+
+   
 }
 
 render()
